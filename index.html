@@ -2,218 +2,1326 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>درخواست مصالح | NEXA</title>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+
+  <title>درخواست مصالح</title>
+
+  <!-- Telegram Mini App -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
   <style>
-    :root{
-      --cream:#f6efe1;
-      --cream2:#fffaf1;
-      --gold:#b78a3c;
-      --gold2:#d3ae68;
-      --ink:#332d24;
-      --muted:#7d7365;
-      --line:#e5d7bc;
-      --white:#fffdf8;
-      --green:#56735a;
-      --red:#9e5148;
+    /* =========================
+       RESET
+    ========================= */
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;background:linear-gradient(160deg,#fffaf1 0%,var(--cream) 62%,#eadfc8 100%);color:var(--ink)}
-    body{padding:16px}
-    .app{max-width:520px;margin:auto}
-    .hero{text-align:center;padding:10px 8px 18px}
-    .mark{width:64px;height:64px;margin:0 auto 14px;border-radius:20px;display:grid;place-items:center;background:linear-gradient(145deg,var(--gold2),var(--gold));color:#fff;font-size:30px;box-shadow:0 10px 24px rgba(110,80,25,.2)}
-    h1{font-size:24px;margin:0;font-weight:800}
-    .subtitle{margin:7px 0 0;color:var(--muted);font-size:13px}
-    .card{background:rgba(255,253,248,.9);border:1px solid rgba(183,138,60,.18);border-radius:24px;padding:18px;box-shadow:0 14px 35px rgba(76,58,29,.1);backdrop-filter:blur(10px)}
-    .user{display:flex;align-items:center;gap:12px;padding:13px;background:var(--cream2);border:1px solid var(--line);border-radius:16px;margin-bottom:18px}
-    .avatar{width:44px;height:44px;border-radius:50%;background:var(--gold);color:#fff;display:grid;place-items:center;font-weight:800;font-size:17px}
-    .name{font-weight:800;font-size:15px}.role{font-size:12px;color:var(--muted);margin-top:3px}
-    .section-title{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;margin-bottom:14px}
-    .icon{width:30px;height:30px;border-radius:9px;background:#f0e4ca;display:grid;place-items:center;color:#8c682f}
-    .field{margin:0 0 13px}
-    label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
-    input,textarea{width:100%;border:1px solid var(--line);border-radius:13px;background:#fffdf8;color:var(--ink);padding:13px 14px;font-size:14px;outline:none}
-    input:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(183,138,60,.11)}
-    textarea{min-height:95px;resize:vertical}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .btn{width:100%;border:0;border-radius:14px;padding:14px;margin-top:6px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#fff;font-size:15px;font-weight:800;box-shadow:0 8px 18px rgba(110,80,25,.18);cursor:pointer}
-    .btn:active{transform:scale(.99)}.btn:disabled{opacity:.55;cursor:not-allowed}
-    .status{display:none;margin-top:13px;border-radius:12px;padding:11px 12px;font-size:13px;line-height:1.7}
-    .status.show{display:block}.success{background:#edf3ed;color:var(--green)}.error{background:#f7ece9;color:var(--red)}.info{background:#f2ede3;color:#655b4e}
-    .hidden{display:none!important}
-    .success-box{text-align:center;padding:8px 0 4px}
-    .success-icon{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:#edf3ed;color:var(--green);font-size:30px;margin:4px auto 14px}
-    .code{margin-top:12px;padding:11px;background:var(--cream);border-radius:10px;color:#8b682f;font-weight:800;font-size:13px}
-    .footer{text-align:center;color:var(--muted);font-size:11px;padding:16px 0 4px}
-    .debug{margin-top:12px;padding:10px;border-radius:10px;background:#191919;color:#eee;font:11px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;direction:ltr;text-align:left;word-break:break-all;display:none}
-    @media(max-width:420px){body{padding:12px}.row{grid-template-columns:1fr}.card{padding:15px}.hero{padding-top:6px}}
+
+    /* =========================
+       COLORS
+    ========================= */
+
+    :root {
+      --cream: #f7f1e3;
+      --cream-light: #fffaf0;
+      --gold: #b89145;
+      --gold-light: #d7b56d;
+      --gold-dark: #8e6c2f;
+      --brown: #3d3428;
+      --brown-light: #756a5b;
+      --white: #ffffff;
+      --border: #e6d9bd;
+      --success: #58745a;
+      --danger: #a95345;
+      --shadow: 0 10px 35px rgba(70, 55, 30, 0.10);
+    }
+
+    /* =========================
+       BODY
+    ========================= */
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(
+          circle at top right,
+          #fffaf0 0%,
+          var(--cream) 45%,
+          #eee3cd 100%
+        );
+
+      color: var(--brown);
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Tahoma,
+        Arial,
+        sans-serif;
+
+      padding: 18px;
+    }
+
+    /* =========================
+       APP
+    ========================= */
+
+    .app {
+      width: 100%;
+      max-width: 520px;
+      margin: auto;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    .header {
+      text-align: center;
+      padding: 12px 0 22px;
+    }
+
+    .logo {
+      width: 62px;
+      height: 62px;
+
+      margin: 0 auto 14px;
+
+      border-radius: 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        linear-gradient(
+          145deg,
+          var(--gold-light),
+          var(--gold)
+        );
+
+      color: white;
+
+      font-size: 29px;
+
+      box-shadow:
+        0 8px 22px rgba(142,108,47,.25);
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+    }
+
+    .header p {
+      margin-top: 7px;
+      color: var(--brown-light);
+      font-size: 13px;
+    }
+
+    /* =========================
+       CARD
+    ========================= */
+
+    .card {
+      background: rgba(255,255,255,.88);
+
+      border: 1px solid rgba(184,145,69,.18);
+
+      border-radius: 24px;
+
+      padding: 20px;
+
+      box-shadow: var(--shadow);
+
+      backdrop-filter: blur(10px);
+    }
+
+    /* =========================
+       USER
+    ========================= */
+
+    .user-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      padding: 13px;
+
+      margin-bottom: 20px;
+
+      background: var(--cream-light);
+
+      border: 1px solid var(--border);
+
+      border-radius: 15px;
+    }
+
+    .avatar {
+      width: 43px;
+      height: 43px;
+
+      border-radius: 50%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: var(--gold);
+
+      color: white;
+
+      font-size: 18px;
+      font-weight: bold;
+
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      min-width: 0;
+    }
+
+    .user-name {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .user-role {
+      margin-top: 3px;
+
+      color: var(--brown-light);
+
+      font-size: 12px;
+    }
+
+    /* =========================
+       SECTION TITLE
+    ========================= */
+
+    .section-title {
+      display: flex;
+      align-items: center;
+
+      gap: 9px;
+
+      margin-bottom: 15px;
+
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .section-icon {
+      width: 30px;
+      height: 30px;
+
+      border-radius: 9px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: #f1e4c8;
+
+      color: var(--gold-dark);
+    }
+
+    /* =========================
+       FORM
+    ========================= */
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+
+      margin-bottom: 7px;
+
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+
+      width: 100%;
+
+      border: 1px solid var(--border);
+
+      border-radius: 13px;
+
+      background: #fffdf8;
+
+      color: var(--brown);
+
+      padding: 13px 14px;
+
+      outline: none;
+
+      font-size: 14px;
+
+      transition: .2s;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+
+      border-color: var(--gold);
+
+      box-shadow:
+        0 0 0 3px rgba(184,145,69,.12);
+    }
+
+    .field textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    /* =========================
+       TWO COLUMNS
+    ========================= */
+
+    .row {
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 10px;
+    }
+
+    /* =========================
+       BUTTON
+    ========================= */
+
+    .button {
+
+      width: 100%;
+
+      border: none;
+
+      border-radius: 14px;
+
+      padding: 14px;
+
+      margin-top: 7px;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--gold-light),
+          var(--gold)
+        );
+
+      color: white;
+
+      font-size: 15px;
+
+      font-weight: 800;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 7px 18px rgba(142,108,47,.22);
+
+      transition: transform .15s, opacity .15s;
+    }
+
+    .button:active {
+      transform: scale(.98);
+    }
+
+    .button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    /* =========================
+       STATUS
+    ========================= */
+
+    .status {
+
+      margin-top: 14px;
+
+      padding: 12px;
+
+      border-radius: 12px;
+
+      font-size: 13px;
+
+      display: none;
+    }
+
+    .status.success {
+
+      display: block;
+
+      background: #edf4ed;
+
+      color: var(--success);
+    }
+
+    .status.error {
+
+      display: block;
+
+      background: #f8ece9;
+
+      color: var(--danger);
+    }
+
+    /* =========================
+       LOADING
+    ========================= */
+
+    .loading {
+
+      position: fixed;
+
+      inset: 0;
+
+      background: var(--cream);
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      z-index: 100;
+    }
+
+    .loading-box {
+      text-align: center;
+    }
+
+    .spinner {
+
+      width: 42px;
+      height: 42px;
+
+      border-radius: 50%;
+
+      border: 3px solid #eadfc7;
+
+      border-top-color: var(--gold);
+
+      animation: spin .8s linear infinite;
+
+      margin: auto auto 15px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* =========================
+       REGISTER
+    ========================= */
+
+    #registerSection {
+      display: none;
+    }
+
+    #requestSection {
+      display: none;
+    }
+
+    #successSection {
+      display: none;
+      text-align: center;
+    }
+
+    .success-icon {
+
+      width: 65px;
+      height: 65px;
+
+      margin: 5px auto 15px;
+
+      border-radius: 50%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: #edf4ed;
+
+      color: var(--success);
+
+      font-size: 30px;
+    }
+
+    .request-code {
+
+      margin-top: 12px;
+
+      padding: 11px;
+
+      border-radius: 10px;
+
+      background: var(--cream);
+
+      color: var(--gold-dark);
+
+      font-weight: 700;
+
+      font-size: 13px;
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    .footer {
+
+      text-align: center;
+
+      padding: 18px 0 5px;
+
+      color: var(--brown-light);
+
+      font-size: 11px;
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 420px) {
+
+      body {
+        padding: 12px;
+      }
+
+      .card {
+        padding: 16px;
+        border-radius: 20px;
+      }
+
+      .header h1 {
+        font-size: 21px;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+    }
+
   </style>
 </head>
+
+
 <body>
-<div class="app">
-  <div class="hero">
-    <div class="mark">📦</div>
-    <h1>درخواست مصالح</h1>
-    <p class="subtitle">سامانه ثبت و پیگیری درخواست‌های خرید</p>
+
+
+<!-- =========================
+     LOADING
+========================= -->
+
+<div id="loading" class="loading">
+
+  <div class="loading-box">
+
+    <div class="spinner"></div>
+
+    <div>
+      در حال اتصال...
+    </div>
+
   </div>
 
-  <div class="card">
-    <div class="user">
-      <div id="avatar" class="avatar">👤</div>
-      <div>
-        <div id="userName" class="name">در حال شناسایی...</div>
-        <div id="userRole" class="role">در حال اتصال به Telegram</div>
-      </div>
-    </div>
-
-    <div id="registerSection" class="hidden">
-      <div class="section-title"><div class="icon">👤</div>معرفی کاربر</div>
-      <div class="field">
-        <label for="role">سمت / نقش شما</label>
-        <input id="role" type="text" placeholder="مثلاً سرپرست کارگاه">
-      </div>
-      <button id="registerBtn" class="btn" type="button">ادامه</button>
-      <div id="registerStatus" class="status"></div>
-    </div>
-
-    <div id="requestSection" class="hidden">
-      <div class="section-title"><div class="icon">📋</div>ثبت درخواست جدید</div>
-
-      <div class="field">
-        <label for="material">نام مصالح</label>
-        <input id="material" type="text" placeholder="مثلاً سیمان، میلگرد، گچ...">
-      </div>
-
-      <div class="row">
-        <div class="field">
-          <label for="quantity">مقدار</label>
-          <input id="quantity" type="number" inputmode="decimal" placeholder="مثلاً 100">
-        </div>
-        <div class="field">
-          <label for="unit">واحد</label>
-          <input id="unit" type="text" placeholder="کیسه / تن / عدد">
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="description">توضیحات</label>
-        <textarea id="description" placeholder="توضیحات تکمیلی درخواست..."></textarea>
-      </div>
-
-      <button id="submitBtn" class="btn" type="button">ثبت درخواست</button>
-      <div id="requestStatus" class="status"></div>
-    </div>
-
-    <div id="successSection" class="success-box hidden">
-      <div class="success-icon">✓</div>
-      <h2>درخواست ثبت شد</h2>
-      <p style="margin:8px 0 0;color:var(--muted);font-size:13px">درخواست برای بررسی مدیر اجرایی ارسال می‌شود.</p>
-      <div id="requestCode" class="code">کد درخواست: —</div>
-      <button id="newBtn" class="btn" type="button">ثبت درخواست جدید</button>
-    </div>
-
-    <div id="appStatus" class="status"></div>
-    <div id="debug" class="debug"></div>
-  </div>
-
-  <div class="footer">NEXA • Material Request System</div>
 </div>
 
+
+<!-- =========================
+     APP
+========================= -->
+
+<div class="app">
+
+
+  <!-- HEADER -->
+
+  <div class="header">
+
+    <div class="logo">
+      📦
+    </div>
+
+    <h1>
+      درخواست مصالح
+    </h1>
+
+    <p>
+      سامانه ثبت و پیگیری درخواست‌های خرید
+    </p>
+
+  </div>
+
+
+  <!-- MAIN CARD -->
+
+  <div class="card">
+
+
+    <!-- USER -->
+
+    <div class="user-card">
+
+      <div
+        id="avatar"
+        class="avatar"
+      >
+        👤
+      </div>
+
+      <div class="user-info">
+
+        <div
+          id="userName"
+          class="user-name"
+        >
+          در حال شناسایی...
+        </div>
+
+        <div
+          id="userRole"
+          class="user-role"
+        >
+          در حال بررسی اطلاعات
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================
+         REGISTER
+    ========================= -->
+
+    <div id="registerSection">
+
+      <div class="section-title">
+
+        <div class="section-icon">
+          👤
+        </div>
+
+        معرفی کاربر
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          سمت / نقش شما
+        </label>
+
+        <input
+          id="role"
+          type="text"
+          placeholder="مثلاً سرپرست کارگاه"
+        >
+
+      </div>
+
+
+      <button
+        class="button"
+        onclick="registerUser()"
+      >
+        ادامه
+      </button>
+
+
+      <div
+        id="registerStatus"
+        class="status"
+      ></div>
+
+    </div>
+
+
+    <!-- =========================
+         REQUEST
+    ========================= -->
+
+    <div id="requestSection">
+
+      <div class="section-title">
+
+        <div class="section-icon">
+          📋
+        </div>
+
+        ثبت درخواست جدید
+
+      </div>
+
+
+      <!-- MATERIAL -->
+
+      <div class="field">
+
+        <label>
+          نام مصالح
+        </label>
+
+        <input
+          id="material"
+          type="text"
+          placeholder="مثلاً سیمان، میلگرد، گچ..."
+        >
+
+      </div>
+
+
+      <!-- QUANTITY / UNIT -->
+
+      <div class="row">
+
+        <div class="field">
+
+          <label>
+            مقدار
+          </label>
+
+          <input
+            id="quantity"
+            type="number"
+            inputmode="decimal"
+            placeholder="مثلاً 100"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            واحد
+          </label>
+
+          <input
+            id="unit"
+            type="text"
+            placeholder="کیسه / تن / عدد"
+          >
+
+        </div>
+
+      </div>
+
+
+      <!-- DESCRIPTION -->
+
+      <div class="field">
+
+        <label>
+          توضیحات
+        </label>
+
+        <textarea
+          id="description"
+          placeholder="در صورت نیاز توضیحات درخواست را وارد کنید..."
+        ></textarea>
+
+      </div>
+
+
+      <button
+        id="submitButton"
+        class="button"
+        onclick="submitRequest()"
+      >
+        ثبت درخواست
+      </button>
+
+
+      <div
+        id="requestStatus"
+        class="status"
+      ></div>
+
+    </div>
+
+
+    <!-- =========================
+         SUCCESS
+    ========================= -->
+
+    <div id="successSection">
+
+      <div class="success-icon">
+        ✓
+      </div>
+
+      <h2>
+        درخواست ثبت شد
+      </h2>
+
+      <p
+        style="margin-top:8px;color:#756a5b;font-size:13px;"
+      >
+        درخواست شما برای بررسی مدیر اجرایی ارسال شد.
+      </p>
+
+      <div
+        id="requestCode"
+        class="request-code"
+      ></div>
+
+      <button
+        class="button"
+        onclick="newRequest()"
+      >
+        ثبت درخواست جدید
+      </button>
+
+    </div>
+
+
+  </div>
+
+
+  <div class="footer">
+    Material Request System
+  </div>
+
+
+</div>
+
+
 <script>
-  const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
 
-  // مرحله اتصال Backend در گام بعدی این URL را استفاده خواهد کرد.
-  const API_URL = "";
+/* =====================================================
+   TELEGRAM
+===================================================== */
 
-  let telegramUser = null;
+const tg = window.Telegram
+  ? window.Telegram.WebApp
+  : null;
 
-  function showStatus(id, message, type="info"){
-    const el=document.getElementById(id);
-    el.textContent=message;
-    el.className="status show "+type;
-  }
 
-  function showDebug(message){
-    const el=document.getElementById("debug");
-    el.textContent=message;
-    el.style.display="block";
-  }
+/* =====================================================
+   GLOBAL
+===================================================== */
 
-  function initTelegram(){
-    if(!tg){
-      document.getElementById("userName").textContent="Telegram WebApp شناسایی نشد";
-      document.getElementById("userRole").textContent="این صفحه باید از داخل Telegram Mini App باز شود.";
-      showStatus("appStatus","محیط Telegram پیدا نشد. لینک را از داخل Telegram اجرا کنید.","error");
-      showDebug("window.Telegram = undefined\nURL = "+location.href);
-      return;
-    }
+let telegramUser = null;
+let currentUser = null;
+
+
+/* =====================================================
+   START
+===================================================== */
+
+function startApp() {
+
+  /*
+   Telegram Mini App
+  */
+
+  if (tg) {
 
     tg.ready();
+
     tg.expand();
 
-    telegramUser = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
-
-    if(!telegramUser){
-      document.getElementById("userName").textContent="کاربر Telegram شناسایی نشد";
-      document.getElementById("userRole").textContent="initData کاربر دریافت نشد.";
-      showStatus("appStatus","Mini App باز شده ولی اطلاعات کاربر از Telegram دریافت نشد.","error");
-      showDebug(
-        "Telegram WebApp: YES\n"+
-        "Platform: "+(tg.platform||"-")+"\n"+
-        "Version: "+(tg.version||"-")+"\n"+
-        "initData length: "+((tg.initData||"").length)+"\n"+
-        "URL = "+location.href
-      );
-      return;
-    }
-
-    const fullName=[telegramUser.first_name||"",telegramUser.last_name||""].join(" ").trim() || "کاربر";
-    document.getElementById("userName").textContent=fullName;
-    document.getElementById("avatar").textContent=(telegramUser.first_name||"👤").charAt(0);
-    document.getElementById("userRole").textContent="Telegram ID: "+telegramUser.id;
-
-    document.getElementById("registerSection").classList.remove("hidden");
-    showStatus("appStatus","اتصال Telegram با موفقیت انجام شد. مرحله بعد اتصال به Google Sheets است.","success");
-
-    document.getElementById("registerBtn").addEventListener("click", ()=>{
-      const role=document.getElementById("role").value.trim();
-      if(!role){
-        showStatus("registerStatus","لطفاً سمت خود را وارد کنید.","error");
-        return;
-      }
-      // Backend connection will be enabled next.
-      showStatus("registerStatus","کاربر شناسایی شد. در گام بعد ثبت این اطلاعات در Google Sheets فعال می‌شود.","success");
-      document.getElementById("registerSection").classList.add("hidden");
-      document.getElementById("requestSection").classList.remove("hidden");
-      document.getElementById("userRole").textContent="سمت: "+role;
-    });
-
-    document.getElementById("submitBtn").addEventListener("click", ()=>{
-      const material=document.getElementById("material").value.trim();
-      const quantity=document.getElementById("quantity").value.trim();
-      const unit=document.getElementById("unit").value.trim();
-      const description=document.getElementById("description").value.trim();
-
-      if(!material){
-        showStatus("requestStatus","نام مصالح را وارد کنید.","error");
-        return;
-      }
-
-      showStatus("requestStatus","فرم آماده است؛ اتصال ثبت درخواست به Google Sheets در مرحله بعد فعال می‌شود.","info");
-      document.getElementById("submitBtn").disabled=true;
-    });
-
-    document.getElementById("newBtn").addEventListener("click", ()=>{
-      document.getElementById("successSection").classList.add("hidden");
-      document.getElementById("requestSection").classList.remove("hidden");
-    });
   }
 
-  window.addEventListener("load", ()=>{
-    setTimeout(initTelegram,300);
-  });
+
+  /*
+   دریافت اطلاعات کاربر
+  */
+
+  if (
+    tg &&
+    tg.initDataUnsafe &&
+    tg.initDataUnsafe.user
+  ) {
+
+    telegramUser =
+      tg.initDataUnsafe.user;
+
+  }
+
+
+  /*
+   اگر کاربر Telegram پیدا نشد
+  */
+
+  if (!telegramUser) {
+
+    hideLoading();
+
+    document.getElementById(
+      "userName"
+    ).innerText =
+      "کاربر Telegram شناسایی نشد";
+
+    document.getElementById(
+      "userRole"
+    ).innerText =
+      "لطفاً Mini App را از داخل Telegram اجرا کنید.";
+
+    return;
+
+  }
+
+
+  /*
+   نمایش اطلاعات
+  */
+
+  const fullName =
+    (
+      telegramUser.first_name || ""
+    ) +
+    " " +
+    (
+      telegramUser.last_name || ""
+    );
+
+
+  document.getElementById(
+    "userName"
+  ).innerText =
+    fullName.trim() || "کاربر";
+
+
+  /*
+   Avatar
+  */
+
+  document.getElementById(
+    "avatar"
+  ).innerText =
+    (
+      telegramUser.first_name || "👤"
+    ).charAt(0);
+
+
+  /*
+   بررسی کاربر در Google Apps Script
+  */
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(user) {
+
+        hideLoading();
+
+        if (user) {
+
+          currentUser = user;
+
+          document.getElementById(
+            "userRole"
+          ).innerText =
+            "سمت: " +
+            (user.role || "-");
+
+          showRequestForm();
+
+        }
+
+        else {
+
+          document.getElementById(
+            "userRole"
+          ).innerText =
+            "لطفاً سمت خود را ثبت کنید.";
+
+          showRegister();
+
+        }
+
+      }
+    )
+
+    .withFailureHandler(
+      function(error) {
+
+        hideLoading();
+
+        showStatus(
+          "requestStatus",
+          "خطا در اتصال به سرور: " +
+          error.message,
+          "error"
+        );
+
+      }
+    )
+
+    .getUser(
+      String(telegramUser.id)
+    );
+
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+function hideLoading() {
+
+  document.getElementById(
+    "loading"
+  ).style.display = "none";
+
+}
+
+
+/* =====================================================
+   REGISTER
+===================================================== */
+
+function showRegister() {
+
+  document.getElementById(
+    "registerSection"
+  ).style.display = "block";
+
+}
+
+
+function registerUser() {
+
+  const role =
+    document.getElementById(
+      "role"
+    ).value.trim();
+
+
+  if (!role) {
+
+    showStatus(
+      "registerStatus",
+      "لطفاً سمت خود را وارد کنید.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(user) {
+
+        currentUser = user;
+
+        document.getElementById(
+          "userRole"
+        ).innerText =
+          "سمت: " +
+          user.role;
+
+
+        document.getElementById(
+          "registerSection"
+        ).style.display =
+          "none";
+
+
+        showRequestForm();
+
+      }
+    )
+
+    .withFailureHandler(
+      function(error) {
+
+        showStatus(
+          "registerStatus",
+          error.message,
+          "error"
+        );
+
+      }
+    )
+
+    .saveUser({
+
+      telegram_id:
+        String(telegramUser.id),
+
+      name:
+        (
+          telegramUser.first_name || ""
+        ) +
+        " " +
+        (
+          telegramUser.last_name || ""
+        ),
+
+      username:
+        telegramUser.username || "",
+
+      role:
+        role
+
+    });
+
+}
+
+
+/* =====================================================
+   REQUEST FORM
+===================================================== */
+
+function showRequestForm() {
+
+  document.getElementById(
+    "requestSection"
+  ).style.display = "block";
+
+}
+
+
+/* =====================================================
+   SUBMIT REQUEST
+===================================================== */
+
+function submitRequest() {
+
+  const material =
+    document.getElementById(
+      "material"
+    ).value.trim();
+
+
+  const quantity =
+    document.getElementById(
+      "quantity"
+    ).value.trim();
+
+
+  const unit =
+    document.getElementById(
+      "unit"
+    ).value.trim();
+
+
+  const description =
+    document.getElementById(
+      "description"
+    ).value.trim();
+
+
+  if (!material) {
+
+    showStatus(
+      "requestStatus",
+      "نام مصالح را وارد کنید.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  const button =
+    document.getElementById(
+      "submitButton"
+    );
+
+
+  button.disabled = true;
+
+  button.innerText =
+    "در حال ثبت...";
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(result) {
+
+        document.getElementById(
+          "requestSection"
+        ).style.display =
+          "none";
+
+
+        document.getElementById(
+          "successSection"
+        ).style.display =
+          "block";
+
+
+        document.getElementById(
+          "requestCode"
+        ).innerText =
+          "کد درخواست: " +
+          result.request_id;
+
+
+        button.disabled = false;
+
+        button.innerText =
+          "ثبت درخواست";
+
+      }
+    )
+
+    .withFailureHandler(
+      function(error) {
+
+        showStatus(
+          "requestStatus",
+          error.message,
+          "error"
+        );
+
+
+        button.disabled = false;
+
+        button.innerText =
+          "ثبت درخواست";
+
+      }
+    )
+
+    .saveRequest({
+
+      telegram_id:
+        String(telegramUser.id),
+
+      name:
+        (
+          telegramUser.first_name || ""
+        ) +
+        " " +
+        (
+          telegramUser.last_name || ""
+        ),
+
+      material:
+        material,
+
+      quantity:
+        quantity,
+
+      unit:
+        unit,
+
+      description:
+        description
+
+    });
+
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+function showStatus(
+  elementId,
+  message,
+  type
+) {
+
+  const element =
+    document.getElementById(
+      elementId
+    );
+
+
+  element.innerText =
+    message;
+
+
+  element.className =
+    "status " + type;
+
+}
+
+
+/* =====================================================
+   NEW REQUEST
+===================================================== */
+
+function newRequest() {
+
+  document.getElementById(
+    "material"
+  ).value = "";
+
+
+  document.getElementById(
+    "quantity"
+  ).value = "";
+
+
+  document.getElementById(
+    "unit"
+  ).value = "";
+
+
+  document.getElementById(
+    "description"
+  ).value = "";
+
+
+  document.getElementById(
+    "successSection"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "requestSection"
+  ).style.display =
+    "block";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+window.addEventListener(
+  "load",
+  function() {
+
+    setTimeout(
+      startApp,
+      300
+    );
+
+  }
+);
+
 </script>
+
 </body>
 </html>
