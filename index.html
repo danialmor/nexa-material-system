@@ -66,7 +66,7 @@
 </div>
 
 <script>
-const API_URL='https://script.google.com/macros/s/AKfycbwo5N4rN-UQqLgyDJTwIMY9WNJsrvLnKnDmeA1ALAHD1WIUUYXA-t7znqGJj4g7zlo9/exec';
+const API_URL='PASTE_NEW_WEB_APP_EXEC_URL_HERE';
 const TG=window.Telegram?.WebApp;
 let STATE=null;
 
@@ -80,13 +80,23 @@ function showMessage(text,type=''){
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 function api(action,extra={}){
   return new Promise((resolve,reject)=>{
+    if(!API_URL || API_URL.indexOf('PASTE_NEW_WEB_APP')===0){
+      reject(new Error('آدرس Web App جدید در index.html وارد نشده است.'));
+      return;
+    }
     const cb='nexa_cb_'+Date.now()+'_'+Math.floor(Math.random()*10000);
     const s=document.createElement('script');
+    const timer=setTimeout(()=>{
+      delete window[cb];
+      s.remove();
+      reject(new Error('اتصال به NEXA برقرار نشد. Web App URL و Deployment را بررسی کنید.'));
+    },15000);
     const params=new URLSearchParams({action,initData:TG?.initData||'',callback:cb});
     Object.entries(extra).forEach(([k,v])=>params.set(k,typeof v==='object'?JSON.stringify(v):v));
-    window[cb]=(data)=>{delete window[cb];s.remove();resolve(data)};
-    s.onerror=()=>{delete window[cb];s.remove();reject(new Error('API connection failed'))};
-    s.src=API_URL+'?'+params.toString();document.body.appendChild(s);
+    window[cb]=(data)=>{clearTimeout(timer);delete window[cb];s.remove();resolve(data)};
+    s.onerror=()=>{clearTimeout(timer);delete window[cb];s.remove();reject(new Error('Web App URL در دسترس نیست یا Deployment عمومی نیست.'))};
+    s.src=API_URL+'?'+params.toString();
+    document.body.appendChild(s);
   });
 }
 
@@ -94,6 +104,8 @@ async function boot(){
   try{
     if(!TG){showMessage('این سامانه باید از داخل Telegram باز شود.','error');return}
     showMessage('در حال اتصال به NEXA...');
+    const health=await api('health');
+    if(!health.success) throw new Error(health.error||'Backend unavailable');
     STATE=await api('get_app_state');
     if(!STATE.success) throw new Error(STATE.error||'خطا در دریافت اطلاعات');
     showMessage('');
