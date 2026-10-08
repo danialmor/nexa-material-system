@@ -1,141 +1,213 @@
-<!doctype html>
-<html lang="fa" dir="rtl">
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NEXA</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root{font-family:Tahoma,Arial,sans-serif}*{box-sizing:border-box}
-body{margin:0;background:var(--tg-theme-bg-color,#f4f6f8);color:var(--tg-theme-text-color,#17202a)}
-.wrap{max-width:760px;margin:auto;padding:16px 14px 40px}
-.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.brand{font-size:24px;font-weight:800}.muted{opacity:.7;font-size:13px}
-.card{background:var(--tg-theme-secondary-bg-color,#fff);border-radius:16px;padding:14px;margin:10px 0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.mod{border:0;background:var(--tg-theme-secondary-bg-color,#fff);color:inherit;border-radius:16px;padding:14px;text-align:right;min-height:110px;cursor:pointer;font:inherit}
-.mod b{display:block;margin-top:8px}.mod small{display:block;margin-top:5px;opacity:.65;font-size:11px;line-height:1.6}
-label{display:block;font-size:12px;font-weight:700;margin:10px 0 5px}
-select,input,textarea,button{width:100%;font:inherit;border-radius:12px;border:1px solid rgba(127,127,127,.25);padding:10px;background:var(--tg-theme-bg-color,#fff);color:inherit}
-textarea{min-height:80px}
-button.p{border:0;background:var(--tg-theme-button-color,#2481cc);color:var(--tg-theme-button-text-color,#fff);font-weight:700;margin-top:10px}
-button.s{background:transparent;margin-top:10px}
-button.r{background:#c0392b;border:0;color:#fff;margin-top:8px;font-weight:700}
-.ok{padding:10px;border-radius:12px;background:rgba(36,129,204,.12);margin-bottom:8px}
-.er{padding:10px;border-radius:12px;background:rgba(220,53,69,.12);color:#a11;margin-bottom:8px}
-.li{padding:10px 0;border-bottom:1px solid rgba(127,127,127,.15)}.li:last-child{border:0}
-.hidden{display:none}pre{white-space:pre-wrap;font:inherit;margin:6px 0}
+:root{
+  --bg:var(--tg-theme-bg-color,#ffffff);
+  --bg2:var(--tg-theme-secondary-bg-color,#f1f3f5);
+  --tx:var(--tg-theme-text-color,#14181f);
+  --hint:var(--tg-theme-hint-color,#6b7280);
+  --btn:var(--tg-theme-button-color,#2a6df4);
+  --btnx:var(--tg-theme-button-text-color,#ffffff);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg2);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+main{max-width:480px;margin:0 auto;padding:16px}
+h1{font-size:24px;line-height:1.25;margin:8px 0 4px}
+h2{font-size:15px;margin:0 0 10px;color:var(--hint);font-weight:600}
+section{background:var(--bg);border-radius:14px;padding:16px;margin-top:12px}
+.badge{display:inline-block;padding:2px 12px;border-radius:99px;background:var(--btn);color:var(--btnx);font-size:14px}
+.wait{border-inline-start:4px solid var(--btn)}
+.wait b{display:block;margin-bottom:4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--bg2);border-radius:8px;padding:4px 10px;font-size:13px}
+.hint{color:var(--hint);font-size:14px}
+button{font:inherit;cursor:pointer;border:0}
+.main-btn{width:100%;padding:12px;border-radius:12px;background:var(--btn);color:var(--btnx);font-weight:600;margin-top:10px}
+.langs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lang{padding:12px;border-radius:12px;background:var(--bg);color:var(--tx);border:2px solid transparent}
+section .lang{background:var(--bg2)}
+.lang[aria-pressed="true"]{border-color:var(--btn);font-weight:600}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--btn);outline-offset:2px}
+select,input:not([type=checkbox]){width:100%;padding:10px;border-radius:10px;border:0;background:var(--bg2);color:var(--tx);font:inherit;margin-top:6px}
+.f{display:block;margin-top:8px;font-size:13px;color:var(--hint)}
+.chk{display:flex;gap:8px;align-items:center;padding:6px 0}
+.chk input{width:20px;height:20px}
+.center{text-align:center;padding:48px 16px}
+#toast{position:fixed;inset-inline:16px;bottom:calc(16px + env(safe-area-inset-bottom));max-width:448px;margin:auto;background:var(--tx);color:var(--bg);padding:10px 14px;border-radius:12px;text-align:center}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="head">
-    <div><div class="brand">NEXA</div><div class="muted">سامانه درون‌سازمانی</div></div>
-    <button class="s" style="width:auto;margin:0;padding:8px 12px" onclick="location.reload()">↻</button>
-  </div>
-  <div id="msg"></div>
-  <section id="pending" class="card hidden"><h3>در انتظار تأیید</h3><div id="ptxt"></div></section>
-  <section id="dash" class="hidden">
-    <div class="card"><b id="uname"></b></div>
-    <div id="mods" class="grid"></div>
-  </section>
-  <section id="screen" class="card hidden"></section>
-</div>
+<main id="app"><div class="center hint">…</div></main>
+<div id="toast" hidden role="status"></div>
 <script>
-const API_URL='https://script.google.com/macros/s/AKfycbw_D-ysxf2Gn03Jq_rv-Sh5x0UFNwr5iIlNQjw1TliQHNYrvnFnV52SH8NFZXJUsuuV/exec';
-const TG=window.Telegram&&Telegram.WebApp;let S=null;
-if(TG){TG.ready();TG.expand()}
-const $=id=>document.getElementById(id);
-const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-function msg(t,c){const e=$('msg');e.className=t?c:'';e.textContent=t||''}
-
-function api(action,extra){return new Promise((res,rej)=>{
-  const cb='cb'+Date.now()+Math.floor(Math.random()*1e4),s=document.createElement('script');
-  const tm=setTimeout(()=>{delete window[cb];s.remove();rej(new Error('اتصال برقرار نشد. دوباره تلاش کنید.'))},20000);
-  const p=new URLSearchParams({action:action,initData:TG?TG.initData:'',callback:cb});
-  Object.entries(extra||{}).forEach(([k,v])=>p.set(k,typeof v==='object'?JSON.stringify(v):v));
-  window[cb]=d=>{clearTimeout(tm);delete window[cb];s.remove();res(d)};
-  s.onerror=()=>{clearTimeout(tm);delete window[cb];s.remove();rej(new Error('Web App در دسترس نیست.'))};
-  s.src=API_URL+'?'+p;document.body.appendChild(s)})}
-async function call(a,x){const r=await api(a,x);if(!r||!r.success)throw new Error((r&&r.error)||'خطا');return r}
-
-async function boot(){
-  try{
-    if(!TG||!TG.initData){msg('این سامانه باید از داخل تلگرام باز شود.','er');return}
-    msg('در حال اتصال...','ok');S=await call('get_app_state');msg('');render();
-  }catch(e){msg(e.message,'er')}
-}
-function render(){
-  ['pending','dash','screen'].forEach(i=>$(i).classList.add('hidden'));
-  const u=S.user;
-  if(u.status!=='فعال'){
-    $('ptxt').textContent=u.status==='رد شده'?'درخواست عضویت شما رد شده است.':'درخواست عضویت شما ثبت شد. پس از تأیید مدیر سیستم، دوباره پنل را باز کنید.';
-    $('pending').classList.remove('hidden');return;
-  }
-  $('uname').textContent='👤 '+(u.name||u.username)+' — '+u.role_1;
-  $('mods').innerHTML='<button class="mod" onclick="open_(\'inbox\')"><div style="font-size:26px">⏳</div><b>کارتابل من</b><small>درخواست‌های منتظر تأیید شما</small></button>'+
-    (S.modules||[]).map(m=>`<button class="mod" onclick="open_('${esc(m.slug)}')"><div style="font-size:26px">${esc(m.icon)}</div><b>${esc(m.name)}</b><small>${esc(m.description)}</small></button>`).join('');
-  $('dash').classList.remove('hidden');
-}
-function scr(html){const s=$('screen');s.innerHTML=html+'<button class="s" onclick="back()">بازگشت</button>';s.classList.remove('hidden');s.scrollIntoView()}
-function back(){$('screen').classList.add('hidden')}
-const PO=()=>(S.projects||[]).map(p=>`<option value="${esc(p.project_id)}">${esc(p.name)}</option>`).join('');
-
-const FORMS={
-  material_request:{t:'📦 درخواست متریال',a:'create_request',f:[['project','پروژه','project'],['material','نام متریال'],['quantity','مقدار'],['unit','واحد (تن، عدد، ...)'],['description','توضیحات','area']]},
-  progress_statement:{t:'📄 ارسال صورت وضعیت',a:'submit_workflow_item',x:{workflow_id:'WF-PROGRESS'},f:[['project_id','پروژه','project'],['title','عنوان / شماره صورت وضعیت'],['description','توضیحات','area']]},
-  problems:{t:'⚠️ ثبت مشکلات و موانع',a:'create_problem',f:[['project_id','پروژه','project'],['title','عنوان'],['description','شرح','area'],['start_date','تاریخ شروع','date'],['delay_days','تأخیر (روز)','number']]},
-  site_visits:{t:'📝 ثبت بازدید',a:'create_visit',f:[['project_id','پروژه','project'],['visit_date','تاریخ','date'],['progress','درصد پیشرفت','number'],['summary','خلاصه بازدید','area'],['problems','مشکلات','area']]}
+const API = 'https://script.google.com/macros/s/AKfycbxGnVlg7IzVDfZNrJZQmUZ3vfmPAYCDXwyEHcFE2xdWnSCk84OpthratcIFsZG2CstU/exec';
+const SITE = 'https://sites.google.com/view/msproject-sarzamin';
+const NAMES = {en:'English', fa:'فارسی', ar:'العربية', tr:'Türkçe', ru:'Русский'};
+const T = {
+  en:{hi:'Hello',role:'Role',lang:'Language',access:'Your access',none:'No access yet',wt:'Waiting for approval',wp:'Your account is registered. An administrator will assign your role soon.',site:'Open project site',err:'Could not load',retry:'Try again',tg:'Open this page from the Telegram bot.'},
+  fa:{hi:'سلام',role:'نقش',lang:'زبان',access:'دسترسی‌های شما',none:'هنوز دسترسی ندارید',wt:'در انتظار تأیید',wp:'ثبت‌نام شما انجام شد. ادمین به‌زودی نقش شما را تعیین می‌کند.',site:'باز کردن سایت پروژه',err:'بارگذاری نشد',retry:'تلاش دوباره',tg:'این صفحه را از داخل ربات تلگرام باز کنید.'},
+  ar:{hi:'مرحبًا',role:'الدور',lang:'اللغة',access:'صلاحياتك',none:'لا توجد صلاحيات بعد',wt:'بانتظار الموافقة',wp:'تم تسجيلك. سيحدد المسؤول دورك قريبًا.',site:'فتح موقع المشروع',err:'تعذر التحميل',retry:'حاول مرة أخرى',tg:'افتح هذه الصفحة من بوت تيليجرام.'},
+  tr:{hi:'Merhaba',role:'Rol',lang:'Dil',access:'Yetkileriniz',none:'Henüz yetki yok',wt:'Onay bekleniyor',wp:'Kaydınız alındı. Yönetici yakında rolünüzü belirleyecek.',site:'Proje sitesini aç',err:'Yüklenemedi',retry:'Tekrar dene',tg:'Bu sayfayı Telegram botundan açın.'},
+  ru:{hi:'Здравствуйте',role:'Роль',lang:'Язык',access:'Ваши права',none:'Прав пока нет',wt:'Ожидает одобрения',wp:'Вы зарегистрированы. Администратор скоро назначит вам роль.',site:'Открыть сайт проекта',err:'Не удалось загрузить',retry:'Повторить',tg:'Откройте эту страницу из Telegram-бота.'}
 };
-function open_(k){
-  if(FORMS[k])return form(k);
-  const m={inbox:inbox,delay_results:delay_results,project_performance:project_performance,project_downloads:project_downloads,role_management:role_management,workflow_management:workflow_management};
-  (m[k]||(()=>scr('<p>این بخش هنوز آماده نیست.</p>')))();
+// Admin-panel strings: English + Persian (other languages fall back to English)
+Object.assign(T.en,{adm:'Admin panel',back:'Back',users:'Users',roles:'Roles',save:'Save',saved:'Saved',perms:'Permissions',st_active:'Active',st_pending:'Pending',st_blocked:'Blocked'});
+Object.assign(T.fa,{adm:'پنل مدیریت',back:'بازگشت',users:'کاربران',roles:'نقش‌ها',save:'ذخیره',saved:'ذخیره شد',perms:'دسترسی‌ها',st_active:'فعال',st_pending:'در انتظار',st_blocked:'مسدود'});
+
+const tg = window.Telegram && Telegram.WebApp;
+const app = document.getElementById('app');
+let lang = 'en', me = null, A = null, tab = 'users';
+const t = k => ((T[lang] || {})[k]) || T.en[k] || k;
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const has = p => me.permissions.indexOf(p) > -1;
+const rt = r => r.titles[lang] || r.titles.en || r.key;
+
+function toast(m){
+  const x = document.getElementById('toast');
+  x.textContent = m; x.hidden = false;
+  clearTimeout(toast.h); toast.h = setTimeout(() => x.hidden = true, 1800);
 }
-function form(k){
-  const F=FORMS[k];
-  scr(`<h3>${F.t}</h3>`+F.f.map(([id,l,t])=>`<label>${l}</label>`+(t==='project'?`<select id="f_${id}"><option value="">انتخاب کنید</option>${PO()}</select>`:t==='area'?`<textarea id="f_${id}"></textarea>`:`<input id="f_${id}" type="${t||'text'}">`)).join('')+
-    `<button class="p" onclick="send_('${k}')">ثبت</button>`+(k==='problems'?'<div id="plist" style="margin-top:12px"></div>':''));
-  if(k==='problems')call('get_problems').then(r=>{$('plist').innerHTML=(r.problems||[]).map(p=>`<div class="li"><b>${esc(p.title)}</b><div class="muted">${esc(p.status)} | تأخیر: ${esc(p.delay_days||0)} روز</div></div>`).join('')||'موردی ثبت نشده.'}).catch(()=>{});
+function setLang(l){
+  lang = T[l] ? l : 'en';
+  document.documentElement.lang = lang;
+  document.documentElement.dir = (lang === 'fa' || lang === 'ar') ? 'rtl' : 'ltr';
 }
-async function send_(k){
-  const F=FORMS[k],d=Object.assign({},F.x);F.f.forEach(([id])=>d[id]=$('f_'+id).value);
-  try{await call(F.a,d);msg('✅ ثبت شد.','ok');k==='problems'?form(k):back()}catch(e){msg(e.message,'er')}
+async function call(action, extra){
+  const r = await fetch(API, {method:'POST', body: JSON.stringify(Object.assign({action, initData: tg.initData}, extra))});
+  const j = await r.json();
+  if(!j.ok) throw new Error(j.error);
+  return j.data;
 }
 
-async function inbox(){
-  scr('<h3>⏳ کارتابل من</h3><div id="ib">در حال دریافت...</div>');
-  try{const r=await call('get_inbox');
-    $('ib').innerHTML=(r.items||[]).map(i=>`<div class="li"><b>مرحله: ${esc(i.step)}</b><pre>${esc(i.text)}</pre><button class="p" onclick="act_('${esc(i.item_id)}','ok')">✅ ${esc(i.label)}</button>${i.can_reject?`<button class="r" onclick="act_('${esc(i.item_id)}','no')">❌ رد</button>`:''}</div>`).join('')||'کارتابل شما خالی است ✅';
-  }catch(e){$('ib').innerHTML='<div class="er">'+esc(e.message)+'</div>'}
+/* ---------- Main view ---------- */
+function view(){
+  const u = me.user, role = me.role_titles[lang] || me.role_titles.en || u.role;
+  const name = [u.first_name, u.last_name].filter(Boolean).join(' ') || u.username || '';
+  const pending = u.role === 'pending' || u.status === 'pending';
+  app.innerHTML =
+    '<h1>' + esc(t('hi')) + ' ' + esc(name) + '</h1>' +
+    '<p class="hint">' + esc(t('role')) + ': <span class="badge">' + esc(role) + '</span></p>' +
+    (pending ? '<section class="wait"><b>' + esc(t('wt')) + '</b>' + esc(t('wp')) + '</section>' : '') +
+    '<section><h2>' + esc(t('access')) + '</h2>' +
+      (me.permissions.length
+        ? '<div class="chips">' + me.permissions.map(p => '<span class="chip">' + esc(p) + '</span>').join('') + '</div>'
+        : '<span class="hint">' + esc(t('none')) + '</span>') + '</section>' +
+    (has('view_dashboard') ? '<section><button class="main-btn" id="site" style="margin:0">' + esc(t('site')) + '</button></section>' : '') +
+    ((has('manage_users') || has('manage_roles')) ? '<section><button class="main-btn" id="adm" style="margin:0">' + esc(t('adm')) + '</button></section>' : '') +
+    '<section><h2>' + esc(t('lang')) + '</h2><div class="langs">' +
+      Object.keys(NAMES).map(l => '<button class="lang" data-l="' + l + '" aria-pressed="' + (l === lang) + '">' + NAMES[l] + '</button>').join('') +
+    '</div></section>';
+  const site = document.getElementById('site');
+  if(site) site.onclick = () => tg.openLink(SITE);
+  const adm = document.getElementById('adm');
+  if(adm) adm.onclick = openAdmin;
+  app.querySelectorAll('.lang').forEach(b => b.onclick = async () => {
+    const l = b.dataset.l;
+    setLang(l); view();
+    try { await call('setLang', {lang: l}); } catch(e) { fail(e); }
+  });
 }
-async function act_(id,k){try{await call('act_item',{item_id:id,kind:k});msg('✅ ثبت شد.','ok');inbox()}catch(e){msg(e.message,'er')}}
 
-async function listScr(t,a,key,fn){
-  scr(`<h3>${t}</h3><div id="ls">در حال دریافت...</div>`);
-  try{const r=await call(a);$('ls').innerHTML=(r[key]||[]).map(fn).join('')||'موردی ثبت نشده.'}catch(e){$('ls').innerHTML='<div class="er">'+esc(e.message)+'</div>'}
+/* ---------- Admin panel ---------- */
+async function openAdmin(){
+  try { A = await call('admin.list'); tab = A.can.users ? 'users' : 'roles'; adminView(); }
+  catch(e){ toast(e.message); }
 }
-const delay_results=()=>listScr('⏱ نتیجه تأخیرات','get_delay_results','delays',p=>`<div class="li"><b>${esc(p.title)}</b><div>تأخیر: ${esc(p.delay_days)} روز</div></div>`);
-const project_performance=()=>listScr('📊 راندمان عملکرد','get_performance','performance',p=>`<div class="li"><b>${esc(p.project_id)}</b><div class="muted">پیشرفت: ${esc(p.progress)} | SPI: ${esc(p.spi)} | CPI: ${esc(p.cpi)} | بهره‌وری: ${esc(p.productivity)}</div></div>`);
-const project_downloads=()=>scr('<h3>📁 پروژه‌ها</h3>'+(S.projects||[]).map(p=>`<div class="li"><b>${esc(p.name)}</b> <span class="muted">${esc(p.code||'')}</span></div>`).join(''));
+async function reloadAdmin(){
+  try { A = await call('admin.list'); adminView(); } catch(e){ toast(e.message); }
+}
+function usersHtml(){
+  return A.users.map(u => {
+    const self = String(u.id) === String(me.user.id), dis = self ? ' disabled' : '';
+    return '<section><b>' + esc(u.name || u.username || u.id) + '</b>' +
+      '<div class="hint">' + (u.username ? '@' + esc(u.username) + ' · ' : '') + esc(u.id) + '</div>' +
+      '<select data-u="' + esc(u.id) + '" data-f="role"' + dis + '>' +
+        A.roles.map(r => '<option value="' + esc(r.key) + '"' + (r.key === u.role ? ' selected' : '') + '>' + esc(rt(r)) + '</option>').join('') +
+      '</select>' +
+      '<select data-u="' + esc(u.id) + '" data-f="status"' + dis + '>' +
+        ['active','pending','blocked'].map(s => '<option value="' + s + '"' + (s === u.status ? ' selected' : '') + '>' + esc(t('st_' + s)) + '</option>').join('') +
+      '</select></section>';
+  }).join('');
+}
+function rolesHtml(){
+  return A.roles.map(r =>
+    '<section data-r="' + esc(r.key) + '"><b>' + esc(rt(r)) + '</b> <span class="hint">' + esc(r.key) + '</span>' +
+    Object.keys(NAMES).map(l => '<label class="f">' + NAMES[l] +
+      '<input data-t="' + l + '" value="' + esc(r.titles[l] || '') + '" dir="auto" maxlength="60"></label>').join('') +
+    '<button class="main-btn" data-save="' + esc(r.key) + '">' + esc(t('save')) + '</button>' +
+    '<h2 style="margin-top:16px">' + esc(t('perms')) + '</h2>' +
+    A.all_perms.map(p => '<label class="chk"><input type="checkbox" data-p="' + esc(p) + '"' +
+      (r.perms.indexOf(p) > -1 ? ' checked' : '') + (r.key === 'admin' ? ' disabled' : '') + '> ' + esc(p) + '</label>').join('') +
+    '</section>').join('');
+}
+function adminView(){
+  const tabs = [];
+  if(A.can.users) tabs.push(['users', t('users')]);
+  if(A.can.roles) tabs.push(['roles', t('roles')]);
+  app.innerHTML =
+    '<p><button class="lang" id="back">← ' + esc(t('back')) + '</button></p>' +
+    '<h1>' + esc(t('adm')) + '</h1>' +
+    '<div class="langs">' + tabs.map(x => '<button class="lang" data-tab="' + x[0] + '" aria-pressed="' + (tab === x[0]) + '">' + esc(x[1]) + '</button>').join('') + '</div>' +
+    (tab === 'users' ? usersHtml() : rolesHtml());
+}
 
-async function role_management(){
-  scr('<h3>👥 کاربران و عنوان‌های شغلی</h3><div class="muted">تأیید کاربر جدید و انتخاب عنوان در ربات انجام می‌شود.</div><div id="ls">در حال دریافت...</div><label>افزودن عنوان شغلی جدید</label><input id="nr" placeholder="مثلاً سرپرست کارگاه"><button class="p" onclick="addRole()">افزودن</button>');
-  try{const r=await call('admin_list_users');$('ls').innerHTML=r.users.map(u=>`<div class="li"><b>${esc(u.name)}</b> <span class="muted">${esc(u.username?'@'+u.username:'')}</span><div class="muted">${esc(u.role_1)} — ${esc(u.status)}</div></div>`).join('')}catch(e){$('ls').innerHTML='<div class="er">'+esc(e.message)+'</div>'}
-}
-async function addRole(){try{await call('admin_add_role',{name:$('nr').value});msg('✅ اضافه شد.','ok');role_management()}catch(e){msg(e.message,'er')}}
+app.addEventListener('click', async e => {
+  const b = e.target.closest('button');
+  if(!b || !A || !document.getElementById('back')) return;
+  if(b.id === 'back'){ load(); }
+  else if(b.dataset.tab){ tab = b.dataset.tab; adminView(); }
+  else if(b.dataset.save){
+    const sec = b.closest('section'), titles = {};
+    sec.querySelectorAll('input[data-t]').forEach(i => titles[i.dataset.t] = i.value.trim());
+    try { await call('admin.setTitles', {role: b.dataset.save, titles}); toast(t('saved')); await reloadAdmin(); }
+    catch(err){ toast(err.message); }
+  }
+});
+app.addEventListener('change', async e => {
+  const el = e.target;
+  try {
+    if(el.dataset.u){
+      const id = el.dataset.u;
+      const sel = f => app.querySelector('select[data-u="' + id + '"][data-f="' + f + '"]');
+      let role = sel('role').value, status = sel('status').value;
+      if(el.dataset.f === 'role' && status !== 'blocked') status = role === 'pending' ? 'pending' : 'active';
+      await call('admin.setUser', {id, role, status});
+      toast(t('saved')); await reloadAdmin();
+    } else if(el.dataset.p){
+      const role = el.closest('section').dataset.r;
+      await call('admin.setPerm', {role, perm: el.dataset.p, value: el.checked});
+      toast(t('saved'));
+    }
+  } catch(err){
+    toast(err.message);
+    if(el.dataset.p) el.checked = !el.checked; else reloadAdmin();
+  }
+});
 
-async function workflow_management(){
-  scr('<h3>🔄 مدیریت گردش کار</h3><div id="ls">در حال دریافت...</div>');
-  try{const r=await call('admin_get_workflow_config');
-    $('ls').innerHTML=r.workflows.map(w=>`<div class="card"><b>${esc(w.name)}</b>${w.steps.map(s=>`<div class="li"><b>مرحله ${s.stepNo}: ${esc(s.title)}</b>${r.users.map(u=>`<label style="font-weight:400;display:block;margin:6px 0"><input type="checkbox" style="width:auto;margin-left:6px" value="${esc(u.telegram_id)}" data-w="${esc(w.workflow_id)}" data-s="${s.stepNo}" ${(s.assigned_user_ids||[]).includes(String(u.telegram_id))?'checked':''}>${esc(u.name)} — ${esc(u.role_1)}</label>`).join('')}<button class="p" onclick="saveWf('${esc(w.workflow_id)}',${s.stepNo})">ذخیره مسئولان</button></div>`).join('')}</div>`).join('')||'گردشی تعریف نشده.';
-  }catch(e){$('ls').innerHTML='<div class="er">'+esc(e.message)+'</div>'}
+function fail(e){
+  const msg = (e && e.message === 'no_init_data') ? t('tg') : t('err') + ' (' + esc(e && e.message) + ')';
+  app.innerHTML = '<div class="center"><p>' + msg + '</p><button class="main-btn" id="retry">' + esc(t('retry')) + '</button></div>';
+  document.getElementById('retry').onclick = load;
 }
-async function saveWf(w,s){
-  try{const ids=[...document.querySelectorAll(`input[data-w="${w}"][data-s="${s}"]`)].filter(x=>x.checked).map(x=>x.value);
-    await call('admin_set_workflow_assignments',{workflow_id:w,step_no:s,telegram_ids:ids});msg('✅ ذخیره شد.','ok')}catch(e){msg(e.message,'er')}
+async function load(){
+  try {
+    if(!tg || !tg.initData) throw new Error('no_init_data');
+    A = null;
+    me = await call('me');
+    setLang(me.user.lang);
+    view();
+  } catch(e) { fail(e); }
 }
-boot();
+
+if(tg){ tg.ready(); tg.expand(); }
+load();
 </script>
 </body>
 </html>
